@@ -1,8 +1,9 @@
 # 電子仙女棒（Electronic Sparkler）— STM32G474RE
+[NUCLEO-G474RE.pdf](https://github.com/user-attachments/files/34307460/NUCLEO-G474RE.pdf)
 
-> 以 NUCLEO-G474RE 開發板驅動 7 顆 LED，模擬「電子仙女棒」的點燃、燃燒蔓延、漸弱熄滅與碳化恢復效果；透過 UART 輸入 `1`～`7` 即可點燃對應位置。
+> 以 NUCLEO-G474RE 開發板驅動 6 顆 LED，模擬「電子仙女棒」的點燃、燃燒蔓延、漸弱熄滅與碳化恢復效果；透過 UART 輸入 `1`～`7` 即可點燃對應位置。
 >
-> An STM32G474RE firmware that simulates a handheld sparkler with 7 LEDs — ignition, chain-spreading flame, fade-out, carbonization and a 5-second auto-recovery — controlled over UART with keys `1`–`7`.
+> An STM32G474RE firmware that simulates a handheld sparkler with 6 LEDs — ignition, chain-spreading flame, fade-out, carbonization and a 5-second auto-recovery — controlled over UART with keys `1`–`7`.
 
 ---
 
@@ -23,12 +24,12 @@
 
 ## 專案簡介
 
-本專案是一個 STM32CubeIDE 產生的嵌入式韌體（MCU：STM32G474RET6，封裝 LQFP64，開發板 NUCLEO-G474RE）。核心概念是把 7 顆 LED 當成一根「仙女棒」上的火藥段：
+本專案是一個 STM32CubeIDE 產生的嵌入式韌體（MCU：STM32G474RET6，封裝 LQFP64，開發板 NUCLEO-G474RE）。核心概念是把 6 顆 LED 當成一根「仙女棒」上的火藥段：
 
 - 使用者從序列埠輸入 `1`～`7`，點燃對應的那一段；
 - 火焰會先**漸亮**，亮度到達一定程度後**向左右鄰居連鎖蔓延**；
 - 每段燒到頂峰後**漸弱熄滅**，燒完的段落標記為**碳化**（無法再次點燃）；
-- 當 7 段全部碳化後，**靜置 5 秒**自動恢復，可重新開始下一輪。
+- 當 6 段全部碳化後，**靜置 5 秒**自動恢復，可重新開始下一輪。
 
 所有 LED 以「軟體 PWM」方式調光（利用 TIM6 定時器中斷），不需額外的硬體 PWM 通道。
 
@@ -36,7 +37,7 @@
 
 ## 功能特色
 
-- ✨ **7 顆 LED 獨立控制**：每顆都有各自的亮度與目標亮度。
+- ✨ **6 顆 LED 獨立控制**：每顆都有各自的亮度與目標亮度。
 - 🌗 **軟體 PWM 調光**：TIM6 以 10 kHz 中斷掃描，提供 0～100 共 100 級亮度，畫面平順不閃爍。
 - 🔥 **連鎖燃燒蔓延**：某顆 LED 亮度 ≥ 60 時，會自動點燃左右兩側尚未燃燒的鄰居，模擬真實仙女棒的火流。
 - 🕯️ **碳化機制**：燒盡（亮度歸零）的段落進入碳化狀態，之後再輸入對應編號也不會點燃。
@@ -52,7 +53,7 @@
 |---|---|
 | 開發板 | NUCLEO-G474RE（STM32G474RET6，LQFP64） |
 | 系統時脈 | 170 MHz（HSI 16 MHz → PLL） |
-| LED 數量 | 7 顆（建議串接限流電阻） |
+| LED 數量 | 6 顆（建議串接限流電阻） |
 | 序列埠 | USART2，115200 bps、8 資料位元、1 停止位元、無同位檢查 |
 
 ### LED 接腳對應
@@ -61,11 +62,10 @@
 |:---:|:---:|:---|
 | LED 1 | `1` | PA0 |
 | LED 2 | `2` | PA1 |
-| LED 3 | `3` | PB0 |
-| LED 4 | `4` | PB1 |
-| LED 5 | `5` | PA4 |
-| LED 6 | `6` | PA5 |
-| LED 7 | `7` | PA6 |
+| LED 3 | `4` | PB1 |
+| LED 4 | `5` | PA4 |
+| LED 5 | `6` | PA5 |
+| LED 6 | `7` | PA6 |
 
 > 註：LED 3、LED 4 特意使用 PB0、PB1，以避開 UART 使用的 PA2（TX）與 PA3（RX）。
 
@@ -160,7 +160,7 @@ make all
 
 | 參數 | 值 | 說明 |
 |---|---|---|
-| `LED_COUNT` | 7 | 仙女棒 LED 總數 |
+| `LED_COUNT` | 6 | 仙女棒 LED 總數 |
 | `PWM_MAX` | 100 | 軟體 PWM 亮度上限（決議度） |
 | TIM6 Prescaler | 169 | 170 MHz → 1 MHz 計數 |
 | TIM6 Period | 99 | 每 100 µs 中斷（10 kHz） |
@@ -185,6 +185,10 @@ make all
 | HAL 驅動 | STM32G4xx HAL Driver + CMSIS |
 
 ---
+[NUCLEO-G474RE.pdf](https://github.com/user-attachments/files/34307448/NUCLEO-G474RE.pdf)
+<img width="3472" height="4624" alt="image" src="https://github.com/user-attachments/assets/e4e98934-6776-49ec-9560-b1e308d45a1f" />
+
+
 
 ## 備註
 
